@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  @apply antialiased;
+}
+
+/**
+* Nice Scrollbar Styles
+*/
+::-webkit-scrollbar {
+  @apply w-2 h-2;
+}
+
+::-webkit-scrollbar-thumb:vertical {
+  /* gradient from slate-300 to 400 to 300 */
+  @apply bg-gradient-to-b from-bg via-slate-400 to-bg;
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+  /* gradient from bg to 400 to 300 */
+  @apply bg-gradient-to-r from-bg via-slate-400 to-bg;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-bg;
+}
+
+.text-wrap-balance {
+  text-wrap: balance;
+}
+
+.text-wrap-pretty {
+  text-wrap: pretty;
+}
+
+.graph-button {
+  border-radius: 9999px;
+}
+
+.graph-button:focus {
+  outline: none;
+}
+
+.graph-button > g {
+  transition: transform 1s;
+  transform: scale(1);
+}
+
+.graph-button.active > g {
+  transform: scale(var(--active-upscale));
+}
+
+.graph-button[data-is-hidden="true"] {
+  @apply opacity-20;
+}
+
+.graph-button.clearly_stated circle {
+  @apply fill-green;
+}
+
+.graph-button.related circle {
+  @apply fill-orange;
+}
+
+.graph-button.editors_estimate circle {
+  @apply fill-red;
+}
+
+.graph {
+  overflow: visible;
+}
+
+.graph-button.active {
+  z-index: 2000;
+}
+
+.graph-button image {
+  transition: all 70ms ease;
+}
+
+.graph-button:not([data-is-active="true"]):hover image {
+  opacity: 0.6;
+}
+
+.quote-lg::first-letter {
+  margin-left: -12px;
+}
+
+.quote-sm::first-letter {
+  margin-left: -9px;
+}

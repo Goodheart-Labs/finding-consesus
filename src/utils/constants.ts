@@ -1,4 +1,4 @@
-import { Rethink_Sans, IM_Fell_English } from "next/font/google";
+import { Rethink_Sans, Kaisei_HarunoUmi } from "next/font/google";
 
 export const ENV = process.env.NEXT_PUBLIC_VERCEL_ENV;
 
@@ -16,4 +16,4 @@ export const getBaseUrl = () => {
 
 // export const inter = Inter({ subsets: ["latin"] });
 export const inter = Rethink_Sans({ subsets: ["latin"] });
-export const kaiseiHarunoUmi = IM_Fell_English({ weight: "400", subsets: ["latin"] });
+export const kaiseiHarunoUmi = Kaisei_HarunoUmi({ weight: "400", subsets: ["latin"] });

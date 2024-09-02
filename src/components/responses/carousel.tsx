@@ -214,8 +214,11 @@ export const ResponsesCarousel = ({
                 <div className="grow grid gap-10 @lg:self-center @lg:py-4">
                   <div className="grid gap-2">
                     <div className="flex gap-6 items-center">
-                      <span className="text-xs text-slate-500/90 font-bold @lg:ml-[2px]">Estimate: {estimate}</span>
+                      <span className="text-xs text-slate-500/90 font-bold @lg:ml-[2px]">
+                        Editor&apos;s estimate of expert view: {estimate}
+                      </span>
                       <div className="flex gap-1 items-center">
+                        <span className="text-xs text-slate-500/90 font-bold @lg:ml-[2px]">Quote quality:</span>
                         <span
                           className={cn("w-3 h-3 rounded-full", {
                             "bg-green": response.type === "clearly_stated",
@@ -300,11 +303,11 @@ const getBoxPositionOnScreenCenter = (width: number, height: number) => ({
 function getTypeText(responsesType: ResponsesType) {
   switch (responsesType) {
     case "editors_estimate":
-      return "Editors Estimate";
+      return "Rough";
     case "related":
-      return "Related Statement";
+      return "Tentantive";
     default:
-      return "Clearly Stated";
+      return "Confident";
   }
 }
 
@@ -322,19 +325,8 @@ function getDescription(responses: Response[]) {
 
   if (uniqueResponseTypes.length === 0) return "";
 
-  const niceName: Record<ResponsesType, string> = {
-    clearly_stated: "direct answers",
-    related: "related answers",
-    editors_estimate: "estimates informed by public statements",
-  };
+  const description =
+    "This chart is made up of estimates of expert views. Quotes are given to illustrate these where possible. Any corrections, please email nathanpmyoung@goodheartlabs.com";
 
-  const description = "This chart is made up of ";
-
-  if (uniqueResponseTypes.length === 1) {
-    return `${description}${niceName[uniqueResponseTypes[0]]}.`;
-  } else if (uniqueResponseTypes.length === 2) {
-    return `${description}a mix of ${niceName[uniqueResponseTypes[0]]} and ${niceName[uniqueResponseTypes[1]]}.`;
-  } else if (uniqueResponseTypes.length === 3) {
-    return `${description}a mix of ${niceName[uniqueResponseTypes[0]]}, ${niceName[uniqueResponseTypes[1]]} and ${niceName[uniqueResponseTypes[2]]}.`;
-  }
+  return description;
 }

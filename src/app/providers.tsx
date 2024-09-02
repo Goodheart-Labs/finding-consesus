@@ -17,5 +17,6 @@ if (typeof window !== "undefined") {
   });
 }
 export function CSPostHogProvider({ children }: { children: React.ReactNode }) {
+  if (process.env.NEXT_PUBLIC_VERCEL_ENV !== "production") return <>{children}</>;
   return <PostHogProvider client={posthog}>{children}</PostHogProvider>;
 }

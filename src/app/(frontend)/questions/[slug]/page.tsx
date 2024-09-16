@@ -1,5 +1,4 @@
 import { QuestionSelector } from "@/components/questions/selector";
-import { FilterSelector } from "@/components/filters/selector";
 import { QuestionList } from "./question";
 import { notFound } from "next/navigation";
 import { getData, getQuestions } from "./helpers";
@@ -27,7 +26,6 @@ export default async function QuestionPage({
           <QuestionSelector questions={questions} />
         </div>
         <div className="sm:w-2/3 px-4 sm:px-0">
-          <FilterSelector filters={filters} className="sm:hidden flex mb-8 mt-4 sticky top-[76px] z-20 shadow" />
           <QuestionList
             questions={questions}
             filters={filters}

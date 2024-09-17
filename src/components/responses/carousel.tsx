@@ -28,6 +28,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { usePathname } from "next/navigation";
 import { SuggestQuoteDialog } from "@/components/SuggestQuoteDialog";
 import { toast } from "sonner";
+import posthog from "posthog-js";
 
 const LONG_TXT_LENGTH = 120;
 const Quote = memo(function Quote({ text }: { text: string }) {
@@ -260,6 +261,7 @@ export const ResponsesCarousel = ({
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
+                        posthog.capture("share_quote", { quote: response.quote });
                         onShare();
                       }}
                     >

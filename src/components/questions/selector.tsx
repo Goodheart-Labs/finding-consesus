@@ -1,8 +1,8 @@
 "use client";
 
-import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import { ChevronDownIcon, ChevronUpIcon, FolderClosedIcon, FolderOpenIcon } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
-import { CSSProperties, type MouseEventHandler, useContext, useLayoutEffect, useRef, useState } from "react";
+import { CSSProperties, useContext, useLayoutEffect, useRef, useState } from "react";
 import { Question } from "@/db/schema";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
@@ -17,6 +17,12 @@ export const QuestionSelector = ({ questions }: { questions: Question[] }) => {
 
   const title = questions.find((q) => pathname.includes(q.slug))?.title;
   const questionIndex = questions.findIndex((q) => activeQuestion === q.slug);
+
+  const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
+
+  const toggleItem = (slug: string) => {
+    setOpenItems((prev) => ({ ...prev, [slug]: !prev[slug] }));
+  };
 
   useLayoutEffect(() => {
     if (!activeQuestion) return;
@@ -116,64 +122,104 @@ export const QuestionSelector = ({ questions }: { questions: Question[] }) => {
             e.currentTarget.style.setProperty("--bullet-top", `${top}px`);
           }}
         >
-          {questions.map((question) => {
-            const isActive = question.slug === activeQuestion;
-            return (
-              <a
-                href={`/questions/${question.slug}`}
-                key={question.id}
-                onMouseEnter={handleMouseEnter}
-                onClick={(e) => {
-                  e.preventDefault();
-                  // history.pushState replacing shallow, imperative routing
-                  // https://github.com/vercel/next.js/pull/58335
-                  window.history.pushState({}, "", `/questions/${question.slug}`);
-                  setActiveQuestion(question.slug);
-
-                  // scroll the question to (113px) from the top
-                  const questionElement = document.querySelector(`[data-slug="${question.slug}"]`);
-                  if (!questionElement) return;
-
-                  window.__userClickedQuestion = true;
-
-                  // get offset of the question element
-                  const offset = questionElement.getBoundingClientRect().top;
-                  // scroll the page to the offset
-                  window.scrollBy({ top: offset - 113, behavior: "smooth" });
-
-                  setTimeout(() => {
-                    window.__userClickedQuestion = false;
-                  }, 1000);
-                }}
-                className={cn(
-                  "cursor-pointer transition-opacity hover:opacity-100 flex items-center text-lg sm:text-left leading-[1.4]",
-                  {
-                    "font-medium": isActive,
-                    "opacity-40": !isActive,
-                  },
-                )}
-                data-active-question={isActive}
-                data-title-slug={question.slug}
-              >
-                {question.title}
-              </a>
-            );
-          })}
-          <div className="absolute left-1 w-2 h-2 mt-[8px] mr-2 -ml-5 rounded-full bg-brand top-[var(--bullet-top)] transition-all"></div>
+          {questions.map((question) => (
+            <QuestionItem
+              key={question.id}
+              question={question}
+              isActive={question.slug === activeQuestion}
+              isOpen={openItems[question.slug] || false}
+              onToggle={() => toggleItem(question.slug)}
+              setActiveQuestion={setActiveQuestion}
+            />
+          ))}
+          <div className="absolute left-6 w-2 h-2 mt-[8px] mr-2 -ml-5 rounded-full bg-brand top-[var(--bullet-top)] transition-all"></div>
         </div>
       </div>
     </>
   );
 };
 
-const handleMouseEnter: MouseEventHandler<HTMLAnchorElement> = (e) => {
-  const sidebar = document.getElementById("question-sidebar");
-  if (!sidebar) return;
+interface QuestionItemProps {
+  question: Question;
+  isActive: boolean;
+  isOpen: boolean;
+  onToggle: () => void;
+  setActiveQuestion: (slug: string) => void;
+}
 
-  // get top relative to sidebar
-  const button = e.currentTarget.getBoundingClientRect();
-  const sidebarRect = sidebar.getBoundingClientRect();
-  const top = button.top - sidebarRect.top;
+interface FolderComponentProps {
+  isOpen: boolean;
+  onToggle: () => void;
+  folderName: string;
+  children: React.ReactNode;
+  isActive: boolean;
+}
 
-  sidebar.style.setProperty("--bullet-top", `${top}px`);
+const FolderComponent: React.FC<FolderComponentProps> = ({ isOpen, onToggle, folderName, children, isActive }) => {
+  return (
+    <Collapsible open={isOpen} onOpenChange={onToggle}>
+      <CollapsibleTrigger asChild>
+        <button
+          className={cn("flex text-lg opacity-60 items-center gap-2", {
+            "opacity-100": isActive || isOpen,
+          })}
+        >
+          {isActive || isOpen ? <FolderOpenIcon size={16} /> : <FolderClosedIcon size={16} />}
+          {folderName}
+        </button>
+      </CollapsibleTrigger>
+      <CollapsibleContent className="pl-6">{children}</CollapsibleContent>
+    </Collapsible>
+  );
 };
+
+export const QuestionItem = ({ question, isActive, isOpen, onToggle, setActiveQuestion }: QuestionItemProps) => {
+  const folderName = question.title.split(" ").slice(0, 2).join(" ");
+
+  return (
+    <FolderComponent isOpen={isActive || isOpen} onToggle={onToggle} folderName={folderName} isActive={isActive}>
+      <a
+        href={`/questions/${question.slug}`}
+        onClick={(e) => {
+          e.preventDefault();
+          window.history.pushState({}, "", `/questions/${question.slug}`);
+          setActiveQuestion(question.slug);
+
+          const questionElement = document.querySelector(`[data-slug="${question.slug}"]`);
+          if (!questionElement) return;
+
+          window.__userClickedQuestion = true;
+
+          const offset = questionElement.getBoundingClientRect().top;
+          window.scrollBy({ top: offset - 113, behavior: "smooth" });
+
+          setTimeout(() => {
+            window.__userClickedQuestion = false;
+          }, 1000);
+        }}
+        className={cn(
+          "cursor-pointer transition-opacity hover:opacity-100 flex items-center text-lg sm:text-left leading-[1.4]",
+          {
+            "font-medium": isActive,
+            "opacity-40": !isActive,
+          },
+        )}
+        data-active-question={isActive}
+        data-title-slug={question.slug}
+      >
+        {question.title}
+      </a>
+    </FolderComponent>
+  );
+};
+
+// const handleMouseEnter: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
+//   const sidebar = document.getElementById("question-sidebar");
+//   if (!sidebar) return;
+
+//   const button = e.currentTarget.getBoundingClientRect();
+//   const sidebarRect = sidebar.getBoundingClientRect();
+//   const top = button.top - sidebarRect.top;
+
+//   sidebar.style.setProperty("--bullet-top", `${top}px`);
+// };

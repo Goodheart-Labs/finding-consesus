@@ -6,7 +6,7 @@ export const VERCEL_URL = process.env.NEXT_PUBLIC_VERCEL_URL;
 
 export const getBaseUrl = () => {
   if (ENV === "production") {
-    return "https://uk-political-opinions.vercel.app/";
+    return "https://findingconsensus.ai";
   } else if (ENV === "preview") {
     return `https://${VERCEL_URL}`;
   } else {

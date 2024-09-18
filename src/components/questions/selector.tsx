@@ -40,11 +40,11 @@ export const QuestionSelector = ({ questions }: { questions: Question[] }) => {
   return (
     <>
       <Collapsible open={open} onOpenChange={setOpen} className="sm:hidden">
-        <CollapsibleTrigger className="w-full px-4 py-5 bg-brand">
+        <CollapsibleTrigger className="w-full px-4 py-5 bg-gradient-to-b from-blue-100 to-blue-50">
           <div className="flex items-center justify-between w-full">
             <div className="flex flex-col items-start w-full mr-3">
-              <h5 className="text-sm font-medium text-[#071A2B] opacity-40">Questions</h5>
-              <h3 className="w-full py-2 font-medium leading-tight text-left text-white bg-transparent">{title}</h3>
+              <h5 className="text-sm font-medium text-[#071A2B] opacity-50">Questions</h5>
+              <h3 className="w-full py-2 font-medium leading-tight text-left bg-transparent">{title}</h3>
             </div>
             <div>
               {open ? (

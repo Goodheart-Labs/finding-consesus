@@ -43,6 +43,7 @@
     "logrocket": "^8.0.1",
     "lucide-react": "^0.300.0",
     "next": "latest",
+    "next-themes": "^0.3.0",
     "pg": "^8.12.0",
     "posthog-js": "^1.160.0",
     "react": "^18",
@@ -51,6 +52,7 @@
     "react-hook-form": "^7.49.2",
     "react-hotkeys-hook": "^4.4.4",
     "slugify": "^1.6.6",
+    "sonner": "^1.5.0",
     "tailwind-merge": "^2.2.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.22.4"

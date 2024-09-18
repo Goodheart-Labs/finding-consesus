@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/carousel";
 import { Question, Respondent, Response } from "@/db/schema";
 import { cn } from "@/lib/utils";
-import { MessageCircleWarning, Share2Icon, Info, MessageCirclePlus } from "lucide-react";
+import { MessageCircleWarning, Share2Icon, Info, MessageCirclePlus, CopyIcon } from "lucide-react";
 
 import Link from "next/link";
 import { memo, useContext, useEffect, useMemo, useState } from "react";
@@ -27,6 +27,8 @@ import { ResponsesType } from "kysely-codegen";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { usePathname } from "next/navigation";
 import { SuggestQuoteDialog } from "@/components/SuggestQuoteDialog";
+import { toast } from "sonner";
+import { usePostHog } from "posthog-js/react";
 
 const LONG_TXT_LENGTH = 120;
 const Quote = memo(function Quote({ text }: { text: string }) {
@@ -56,6 +58,7 @@ export const ResponsesCarousel = ({
   respondentsMap: Record<number, Respondent>;
 }) => {
   const [api, setApi] = useState<CarouselApi>();
+  const posthog = usePostHog();
   const pathname = usePathname();
 
   const [description] = useState(() => getDescription(responses));
@@ -259,10 +262,22 @@ export const ResponsesCarousel = ({
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
+                        posthog.capture("share_quote", { quote: response.quote });
                         onShare();
                       }}
                     >
                       <Share2Icon className="w-4 h-4 mr-2" /> Share on X
+                    </Button>
+                    <Button
+                      variant="secondaryRounded"
+                      size="sm"
+                      className="mb-2 text-xs text-text-lighter dark:bg-slate-100 dark:text-text-lighter hover:bg-slate-100/80"
+                      onClick={() => {
+                        navigator.clipboard.writeText(response.quote ? `${response.quote} - ${respondent.name}` : "");
+                        toast("Quote copied to clipboard");
+                      }}
+                    >
+                      <CopyIcon className="w-4 h-4 mr-2" /> Copy Quote
                     </Button>
                     <ReportQuoteDialog>
                       <Button

@@ -28,7 +28,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { usePathname } from "next/navigation";
 import { SuggestQuoteDialog } from "@/components/SuggestQuoteDialog";
 import { toast } from "sonner";
-import posthog from "posthog-js";
+import { usePostHog } from "posthog-js/react";
 
 const LONG_TXT_LENGTH = 120;
 const Quote = memo(function Quote({ text }: { text: string }) {
@@ -58,6 +58,7 @@ export const ResponsesCarousel = ({
   respondentsMap: Record<number, Respondent>;
 }) => {
   const [api, setApi] = useState<CarouselApi>();
+  const posthog = usePostHog();
   const pathname = usePathname();
 
   const [description] = useState(() => getDescription(responses));
@@ -146,6 +147,14 @@ export const ResponsesCarousel = ({
     },
     [api, isActive],
   );
+
+  useEffect(() => {
+    posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+      api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+      person_profiles: "always",
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (responses.length === 0) {
     return null;
@@ -272,7 +281,7 @@ export const ResponsesCarousel = ({
                       size="sm"
                       className="mb-2 text-xs text-text-lighter dark:bg-slate-100 dark:text-text-lighter hover:bg-slate-100/80"
                       onClick={() => {
-                        navigator.clipboard.writeText(response.quote ?? "");
+                        navigator.clipboard.writeText(response.quote ? `${response.quote} - ${respondent.name}` : "");
                         toast("Quote copied to clipboard");
                       }}
                     >

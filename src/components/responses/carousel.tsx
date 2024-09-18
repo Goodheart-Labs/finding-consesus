@@ -148,14 +148,6 @@ export const ResponsesCarousel = ({
     [api, isActive],
   );
 
-  useEffect(() => {
-    posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-      api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
-      person_profiles: "always",
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   if (responses.length === 0) {
     return null;
   }

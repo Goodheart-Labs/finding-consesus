@@ -7,12 +7,22 @@ const getData = async () => {
     .select("slug")
     .where("visibility", "=", "public")
     .orderBy("order asc")
-    .executeTakeFirstOrThrow();
+    .executeTakeFirst();
 
   return { topQuestion };
 };
 
 export default async function Home() {
   const { topQuestion } = await getData();
+  if (!topQuestion) {
+    return (
+      <div className="grid h-screen place-items-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-2">Oops!</h1>
+          <p className="text-gray-600">No questions found</p>
+        </div>
+      </div>
+    );
+  }
   redirect(`/questions/${topQuestion.slug}`);
 }

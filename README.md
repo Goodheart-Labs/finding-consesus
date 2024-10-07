@@ -11,13 +11,13 @@ docker run --name sb1047-opinions \
   -e POSTGRES_DB=sb1047-opinions \
   -p 5432:5432 -d postgres
 
-bun run migrate up
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/sb1047-opinions bun run migrate up
 ```
 
 ### Generate DB Types
 
 ```bash
-bun run db:codegen
+DATABASE_URL=xxx bun run db:codegen
 ```
 
 ### Run the development server:
